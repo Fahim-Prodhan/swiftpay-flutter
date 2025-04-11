@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   Future<void> loginUser() async {
-    // setState(() => isLoading = true);
+    setState(() => isLoading = true);
 
     final email = emailController.text.trim();
     final pin = pinController.text.trim();
@@ -42,7 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Navigate or show success
         print("Login successful! User ID saved: ${data['_id']}");
-        // Navigator.pushReplacementNamed(context, '/home'); // Optional
+
+        Navigator.pushReplacementNamed(context, '/home'); // Optional
       } else {
         final error = jsonDecode(response.body);
         _showError(error['error'] ?? 'Login failed');

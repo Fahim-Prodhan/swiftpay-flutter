@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:swiftpay/service/baseUrl.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +18,48 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _showBalance = !_showBalance;
     });
+  }
+
+  var userId = '';
+
+
+  Future<void> getUserDetails() async{
+    final prefs = await SharedPreferences.getInstance();
+    final Uid = prefs.getString('userId');
+
+    try{
+      final response = await http.get(Uri.parse('$baseUrl/api/auth/user/$Uid'));
+      if(response.statusCode == 200){
+        print(response.body);
+      }else{
+        throw Exception("User Not Found");
+      }
+    }catch(e){
+      _showError('Something went wrong: $e');
+    }
+
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState()  {
+    super.initState();
+    getUserDetails();
   }
 
   @override
