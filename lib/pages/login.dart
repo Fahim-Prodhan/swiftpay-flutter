@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swiftpay/components/custom_input_field.dart';
 
-
-
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -28,7 +25,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 80),
               Image.network('https://i.ibb.co.com/XZqVVVxv/logo-1.png', height: 60),
               const SizedBox(height: 30),
-              const Text('Login', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+              const Text(
+                'Login',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 30),
               CustomInputField(
                 label: "Phone/Email",
@@ -52,7 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  String email = emailController.text;
+                  String pin = pinController.text;
+
+                  print('Email/Phone: $email');
+                  print('PIN: $pin');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey,
                   minimumSize: const Size.fromHeight(50),
@@ -61,14 +67,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: const Text("Login", style: TextStyle(color: Colors.white)),
               ),
               const SizedBox(height: 10),
-              TextButton(onPressed: () {}, child: const Text("Forgot password?")),
+              TextButton(
+                onPressed: () {},
+                child: const Text("Forgot password?"),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Don't have an account? "),
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(context, '/register'),
-                    child: const Text("Register", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      "Register",
+                      style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
