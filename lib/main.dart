@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:swiftpay/pages/home.dart';
 import 'package:swiftpay/pages/login.dart';
+import 'package:swiftpay/pages/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
-        // '/register': (context) => RegisterScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }
