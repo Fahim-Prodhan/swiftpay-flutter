@@ -52,10 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // You can add login validation here later
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey,
                   minimumSize: const Size.fromHeight(50),
@@ -63,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Text("Login", style: TextStyle(color: Colors.white)),
               ),
-
               const SizedBox(height: 10),
               TextButton(onPressed: () {}, child: const Text("Forgot password?")),
               Row(
