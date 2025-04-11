@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -20,24 +21,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  var userId = '';
 
+  Map<String, dynamic>? userDetails; // Declare at the top of your State class
 
-  Future<void> getUserDetails() async{
+  Future<void> getUserDetails() async {
     final prefs = await SharedPreferences.getInstance();
     final Uid = prefs.getString('userId');
-
-    try{
+    try {
       final response = await http.get(Uri.parse('$baseUrl/api/auth/user/$Uid'));
-      if(response.statusCode == 200){
-        print(response.body);
-      }else{
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          userDetails = data;
+        });
+      } else {
         throw Exception("User Not Found");
       }
-    }catch(e){
+    } catch (e) {
       _showError('Something went wrong: $e');
     }
-
   }
 
   void _showError(String message) {
@@ -86,7 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      _showBalance ? 'Balance: 90 ৳' : 'Check Balance',
+                      _showBalance
+                          ? 'Balance: ${userDetails?["balance"] ?? 0} ৳'
+                          : 'Check Balance',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
