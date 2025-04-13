@@ -1,19 +1,67 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftpay/pages/transaction.dart';
+import 'package:swiftpay/service/baseUrl.dart';
 import 'cash_out.dart';
 import 'recharge.dart';
 import 'send_money.dart';  // Import the SendMoneyPage
 import 'profile.dart';  // Import the ProfilePage
 
 class HomePage extends StatefulWidget {
-  final double balance;
 
-  HomePage({required this.balance});  // Receive balance as a parameter
+  HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _showBalance = false;
+
+  void _toggleBalance() {
+    setState(() {
+      _showBalance = !_showBalance;
+    });
+  }
+
+  Map<String, dynamic>? userDetails; // Declare at the top of your State class
+
+  Future<void> getUserDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final Uid = prefs.getString('userId');
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/auth/user/$Uid'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          userDetails = data;
+        });
+      } else {
+        throw Exception("User Not Found");
+      }
+    } catch (e) {
+      _showError('Something went wrong: $e');
+    }
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
   int _currentIndex = 0; // To keep track of selected item
   bool _isBalanceVisible = false;  // Control balance visibility
 
@@ -28,6 +76,11 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ProfilePage()),  // Navigate to ProfilePage
+      );
+    } if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TransactionsScreen()),  // Navigate to ProfilePage
       );
     }
   }
@@ -71,6 +124,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState()  {
+    super.initState();
+    getUserDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -79,61 +138,37 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           // Header Section
           Container(
+            color: Colors.amber[300],
+            padding: const EdgeInsets.only(top: 60, bottom: 20),
             width: double.infinity,
-            color: Color(0xFFFFC107), // Yellow background
-            padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // Logo (Centered)
-                Image.asset(
-                  'assets/images/swiftpay_logo.png',  // Path to your logo image
-                  height: 80,  // Adjust the height of the logo
-                ),
-                SizedBox(height: 10, width: 10),
-                // Balance Display as the title in the header
+              children: [
+                Image.network('https://i.ibb.co.com/XZqVVVxv/logo-1.png', height: 60),
+                const SizedBox(height: 10),
                 GestureDetector(
-                  onTap: _toggleBalanceVisibility,  // On tap, toggle balance visibility
+                  onTap: _toggleBalance,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-                    width: double.infinity,  // Make the container take the full width
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white, // White background for balance container
-                      borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Balance: ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        _isBalanceVisible
-                            ? Text(
-                          '${widget.balance} ৳',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                            : Text(
-                          '****', // Placeholder when balance is hidden
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      _showBalance
+                          ? 'Balance: ${userDetails?["balance"] ?? 0} ৳'
+                          : 'Check Balance',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.purple,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 10),
           // Button Grid with Square Buttons
           Expanded(
             child: Padding(

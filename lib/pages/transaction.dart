@@ -1,11 +1,44 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:swiftpay/service/baseUrl.dart';
 
-class TransactionsScreen extends StatelessWidget {
-  final List<TransactionModel> transactions = [
-    TransactionModel(type: 'Send Money', toFrom: 'To: 01568451182', id: 'SFTID-140779', amount: -100, date: '11/15/2024'),
-    TransactionModel(type: 'Fee', toFrom: '', id: 'SFTID-122464', amount: -5, date: '11/15/2024'),
-    TransactionModel(type: 'Send Money', toFrom: 'From: 01568451182', id: 'SFTID-122164', amount: 100, date: '11/15/2024'),
-  ];
+class TransactionsScreen extends StatefulWidget {
+
+  @override
+  _TransactionsScreenState createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends State<TransactionsScreen> {
+  List<TransactionModel> transactions = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTransactions();
+  }
+
+  Future<void> fetchTransactions() async {
+    final url = Uri.parse('$baseUrl/api/transaction/get-transaction/01568451181');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          transactions = data.map((json) => TransactionModel.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } else {
+        print('Failed to fetch: ${response.statusCode}');
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print('Error fetching transactions: $e');
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,18 +48,23 @@ class TransactionsScreen extends StatelessWidget {
         title: Text('Transactions', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.amber,
       ),
-      body: ListView.builder(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : transactions.isEmpty
+          ? Center(child: Text("No transactions found"))
+          : ListView.builder(
         itemCount: transactions.length,
         itemBuilder: (context, index) => TransactionTile(transaction: transactions[index]),
       ),
     );
   }
 }
+
 class TransactionModel {
   final String type;
   final String toFrom;
   final String id;
-  final int amount;
+  final double amount;
   final String date;
 
   TransactionModel({
@@ -36,7 +74,28 @@ class TransactionModel {
     required this.amount,
     required this.date,
   });
+
+  factory TransactionModel.fromJson(Map<String, dynamic> json) {
+    String type = json['tType'];
+    double amount = (json['amount'] as num).toDouble();
+    String from = json['from'];
+    String to = json['to'];
+    String userPhone = from; // You can dynamically use the logged-in phone number here
+    String toFrom = (amount > 0 || from == userPhone)
+        ? 'To: $to'
+        : 'From: $from';
+
+    return TransactionModel(
+      type: type,
+      toFrom: toFrom,
+      id: json['transactionId'],
+      amount: amount,
+      date: DateTime.parse(json['createdAt']).toLocal().toString().split(' ')[0],
+    );
+  }
+
 }
+
 class TransactionTile extends StatelessWidget {
   final TransactionModel transaction;
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swiftpay/pages/home.dart';
+import 'package:swiftpay/pages/home_page.dart';
 import 'package:swiftpay/pages/login.dart';
 import 'package:swiftpay/pages/register.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => RegisterScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) =>  HomePage(),
       },
     );
   }
