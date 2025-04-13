@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:swiftpay/components/custom_input_field.dart';
 
 
-
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
