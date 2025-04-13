@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'login.dart';  // Import your LoginPage
+
+import 'login.dart';
+// Import your LoginPage
 
 class ProfilePage extends StatelessWidget {
   final String name = "Test user";
@@ -120,7 +122,7 @@ class ProfilePage extends StatelessWidget {
                 // Navigate to the LoginPage and remove ProfilePage from the stack
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),  // Navigate to LoginPage
+                  MaterialPageRoute(builder: (context) => LoginScreen()),  // Navigate to LoginPage
                 );
               },
               style: ElevatedButton.styleFrom(
