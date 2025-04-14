@@ -69,7 +69,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
-          transactions = data.map((json) => TransactionModel.fromJson(json)).toList();
+          transactions = data.map((json) => TransactionModel.fromJson(json, "${userDetails?['phone']}")).toList();
           isLoading = false;
         });
       } else {
@@ -108,6 +108,7 @@ class TransactionModel {
   final String id;
   final double amount;
   final String date;
+  final bool isPositive;
 
   TransactionModel({
     required this.type,
@@ -115,24 +116,53 @@ class TransactionModel {
     required this.id,
     required this.amount,
     required this.date,
+    required this.isPositive,
   });
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json) {
+  factory TransactionModel.fromJson(Map<String, dynamic> json,  String userPhone) {
     String type = json['tType'];
     double amount = (json['amount'] as num).toDouble();
     String from = json['from'];
     String to = json['to'];
-    String userPhone = from; // You can dynamically use the logged-in phone number here
-    String toFrom = (amount > 0 || from == userPhone)
-        ? 'To: $to'
-        : 'From: $from';
+    String displayType = type;
+    String toFrom = '';
+    bool isPositive = false;
+
+    if (type == 'Fee') {
+      toFrom = 'Service Charge';
+      isPositive = false;
+    } else if (type == 'Agent Transaction') {
+      if (from == userPhone) {
+        displayType = 'Cash Out';
+        toFrom = 'To Agent: $to';
+        isPositive = false;
+      } else {
+        displayType = 'Cash In';
+        toFrom = 'From Agent: $from';
+        isPositive = true;
+      }
+    } else if (type == 'Send Money') {
+      if (from == userPhone) {
+        displayType = 'Send Money';
+        toFrom = 'To: $to';
+        isPositive = false;
+      } else {
+        displayType = 'Received Money';
+        toFrom = 'From: $from';
+        isPositive = true;
+      }
+    } else {
+      toFrom = from == userPhone ? 'To: $to' : 'From: $from';
+      isPositive = from != userPhone;
+    }
 
     return TransactionModel(
-      type: type,
+      type: displayType,
       toFrom: toFrom,
       id: json['transactionId'],
       amount: amount,
       date: DateTime.parse(json['createdAt']).toLocal().toString().split(' ')[0],
+      isPositive: isPositive,
     );
   }
 
@@ -148,20 +178,40 @@ class TransactionTile extends StatelessWidget {
     bool isPositive = transaction.amount > 0;
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: 2,
-      child: ListTile(
-        title: Text(transaction.type, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
           children: [
-            if (transaction.toFrom.isNotEmpty) Text(transaction.toFrom),
-            Text("Transaction ID: ${transaction.id}"),
-            Text(transaction.date),
+            Icon(
+              transaction.isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+              color: transaction.isPositive ? Colors.green : Colors.red,
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(transaction.type, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  SizedBox(height: 4),
+                  Text(transaction.toFrom, style: TextStyle(fontSize: 14)),
+                  SizedBox(height: 4),
+                  Text("ID: ${transaction.id}", style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  SizedBox(height: 2),
+                  Text(transaction.date, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                ],
+              ),
+            ),
+            Text(
+              "${transaction.isPositive ? '+' : '-'} ৳${transaction.amount.abs()}",
+              style: TextStyle(
+                color: transaction.isPositive ? Colors.green : Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
           ],
-        ),
-        trailing: Text(
-          "${isPositive ? '+' : '-'} ৳${transaction.amount.abs()}",
-          style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
         ),
       ),
     );
