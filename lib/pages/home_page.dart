@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftpay/pages/transaction.dart';
+import 'package:swiftpay/pages/user_profile.dart';
 import 'package:swiftpay/service/baseUrl.dart';
 import 'cash_out.dart';
 import 'recharge.dart';
@@ -76,7 +77,7 @@ class _HomePageState extends State<HomePage> {
     if (index == 2) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ProfilePage()),  // Navigate to ProfilePage
+        MaterialPageRoute(builder: (context) => UserProfile()),  // Navigate to ProfilePage
       );
     } if (index == 1) {
       Navigator.push(

@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const SizedBox(height: 80),
-              Image.network('https://i.ibb.co.com/XZqVVVxv/logo-1.png', height: 60),
+              Image(image: AssetImage('assets/logo.png'),height: 100,),
               const SizedBox(height: 30),
               const Text('Login', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               const SizedBox(height: 30),

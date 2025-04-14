@@ -29,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              Image.network('https://i.ibb.co.com/XZqVVVxv/logo-1.png', height: 60),
+              Image(image: AssetImage('assets/logo.png'),height: 100,),
               const SizedBox(height: 20),
               const Text('Register', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
