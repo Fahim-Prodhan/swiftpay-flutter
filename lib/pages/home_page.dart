@@ -8,7 +8,7 @@ import 'package:swiftpay/service/baseUrl.dart';
 import 'cash_out.dart';
 import 'recharge.dart';
 import 'send_money.dart';  // Import the SendMoneyPage
-import 'profile.dart';  // Import the ProfilePage
+
 
 class HomePage extends StatefulWidget {
 

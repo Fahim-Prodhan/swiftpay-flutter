@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftpay/service/baseUrl.dart';
 
 import '../components/custom_input_field.dart';
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,11 +17,90 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool isUser = true;
   bool obscurePin = true;
+  bool isLoading = false;
 
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController pinController = TextEditingController();
+
+
+
+  Future<void> registerUser() async {
+    final fullName = fullNameController.text.trim();
+    final email = emailController.text.trim();
+    final phone = phoneController.text.trim();
+    final pin = pinController.text.trim();
+    final role = isUser ? "user" : "agent";
+
+    if (fullName.isEmpty || email.isEmpty || phone.isEmpty || pin.length < 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all fields correctly.")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final body = {
+        "fullName": fullName,
+        "email": email,
+        "phone": phone,
+        "pin": pin,
+        "role": role,
+      };
+
+      final res = await http.post(
+        Uri.parse('$baseUrl/api/auth/signup'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body),
+      );
+
+      final data = jsonDecode(res.body);
+
+      if (res.statusCode >= 400 || data['error'] != null) {
+        throw Exception(data['error'] ?? "Something went wrong");
+      }
+
+      print(jsonEncode(data["_id"]));
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userId', data['_id']);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration successful!")),
+      );
+
+      Navigator.pushNamed(context, "/home"); // Change to your desired screen
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.toString()}")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Widget _roleButton(String role, bool active) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          isUser = role == 'User';
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: active ? Colors.orange : Colors.grey[300],
+        foregroundColor: active ? Colors.white : Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(role),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              Image(image: AssetImage('assets/logo.png'),height: 100,),
+              Image.asset('assets/logo.png', height: 100),
               const SizedBox(height: 20),
               const Text('Register', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
@@ -75,8 +158,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
               const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {},
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                onPressed: registerUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurpleAccent,
                   minimumSize: const Size.fromHeight(50),
@@ -99,22 +184,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _roleButton(String role, bool active) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          isUser = role == 'User';
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: active ? Colors.orange : Colors.grey[300],
-        foregroundColor: active ? Colors.white : Colors.black,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      child: Text(role),
     );
   }
 }
