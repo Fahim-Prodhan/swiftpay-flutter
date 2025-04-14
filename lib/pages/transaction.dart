@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftpay/service/baseUrl.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -16,12 +17,53 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   void initState() {
     super.initState();
-    fetchTransactions();
+    loadData();
   }
 
-  Future<void> fetchTransactions() async {
-    final url = Uri.parse('$baseUrl/api/transaction/get-transaction/01568451181');
+  Future<void> loadData() async {
+    await getUserDetails();
+    await fetchTransactions();
+  }
 
+  Map<String, dynamic>? userDetails;
+
+  Future<void> getUserDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final Uid = prefs.getString('userId');
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/auth/user/$Uid'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          userDetails = data;
+        });
+      } else {
+        throw Exception("User Not Found");
+      }
+    } catch (e) {
+      _showError('Something went wrong: $e');
+    }
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
+
+  Future<void> fetchTransactions() async {
+    final url = Uri.parse('$baseUrl/api/transaction/get-transaction/${userDetails?['phone']}');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
