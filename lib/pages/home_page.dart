@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
             width: double.infinity,
             child: Column(
               children: [
-                Image.network('https://i.ibb.co.com/XZqVVVxv/logo-1.png', height: 60),
+                Image.asset('assets/logo.png', height: 80),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: _toggleBalance,
