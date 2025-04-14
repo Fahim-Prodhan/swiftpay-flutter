@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   bool _showBalance = false;
 
   void _toggleBalance() {
+    getUserDetails();
     setState(() {
       _showBalance = !_showBalance;
     });

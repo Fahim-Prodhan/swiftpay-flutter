@@ -41,7 +41,7 @@ class _CashOutPageState extends State<CashOutPage> {
     }
   }
 
-  void _sendMoney() async {
+  void _cashOut() async {
     String phone = _phoneController.text.trim();
     String amount = _amountController.text.trim();
     String pin = _pinController.text.trim();
@@ -53,8 +53,8 @@ class _CashOutPageState extends State<CashOutPage> {
 
     double parsedAmount = double.tryParse(amount) ?? 0;
 
-    if (parsedAmount < 10) {
-      _showAlertDialog("Minimum amount to send is 10 Taka.");
+    if (parsedAmount < 50) {
+      _showAlertDialog("Minimum amount to Cash Out is 50 Taka.");
       return;
     }
 
@@ -62,7 +62,7 @@ class _CashOutPageState extends State<CashOutPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse('$baseUrl/api/transaction/create-transaction');
+    final url = Uri.parse('$baseUrl/api/transaction/create-cash-out-transaction');
 
     try {
       final response = await http.post(
@@ -153,7 +153,7 @@ class _CashOutPageState extends State<CashOutPage> {
               TextField(
                 controller: _phoneController,
                 decoration: InputDecoration(
-                  hintText: "Enter recipient's phone number",
+                  hintText: "Enter Agent's phone number",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -195,25 +195,24 @@ class _CashOutPageState extends State<CashOutPage> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: isLoading ? null : _sendMoney,
+                onPressed: isLoading ? null : _cashOut,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6A4CFF),
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 165),
+                  backgroundColor: Color(0xFF6A4CFF), // SwiftPay button color (purple)
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 150),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(12.0), // Rounded corners
                   ),
                 ),
-                child: isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
+                child: Text(
                   'Cash Out',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.white,  // White text color
                   ),
                 ),
               ),
+
             ],
           ),
         ),

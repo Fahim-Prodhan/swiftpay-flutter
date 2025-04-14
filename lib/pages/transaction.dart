@@ -69,7 +69,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
-          transactions = data.map((json) => TransactionModel.fromJson(json, "${userDetails?['phone']}")).toList();
+          transactions = data.map((json) => TransactionModel.fromJson(json, "${userDetails?['phone']}","${userDetails?['role']}")).toList();
           isLoading = false;
         });
       } else {
@@ -119,7 +119,7 @@ class TransactionModel {
     required this.isPositive,
   });
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json,  String userPhone) {
+  factory TransactionModel.fromJson(Map<String, dynamic> json,  String userPhone, String role) {
     String type = json['tType'];
     double amount = (json['amount'] as num).toDouble();
     String from = json['from'];
@@ -128,7 +128,7 @@ class TransactionModel {
     String toFrom = '';
     bool isPositive = false;
 
-    if (type == 'Fee') {
+    if (type == 'Fee' && role != 'agent' && userPhone != '01303687632') {
       toFrom = 'Service Charge';
       isPositive = false;
     } else if (type == 'Agent Transaction') {
