@@ -116,11 +116,11 @@ class _UserProfileState extends State<UserProfile> {
                   padding:
                   EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   decoration: BoxDecoration(
-                    color: isActive ? Colors.green : Colors.red,
+                    color: Colors.green,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isActive ? 'Active' : 'Inactive',
+                    'Active',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

@@ -74,12 +74,12 @@ class _HomePageState extends State<HomePage> {
     });
 
     // Navigate to Profile Page when Profile tab is selected
-    if (index == 2) {
+    if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => UserProfile()),  // Navigate to ProfilePage
       );
-    } if (index == 1) {
+    } if (index == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => TransactionsScreen()),  // Navigate to ProfilePage
@@ -262,12 +262,12 @@ class _HomePageState extends State<HomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.transfer_within_a_station, color: Colors.white), // Icon for Transaction
-            label: 'Transaction',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.person, color: Colors.white),  // Icon for Profile
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.file_present, color: Colors.white), // Icon for Transaction
+            label: 'Transaction',
           ),
         ],
       ),

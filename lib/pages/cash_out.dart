@@ -204,12 +204,14 @@ class _CashOutPageState extends State<CashOutPage> {
                       borderRadius: BorderRadius.circular(12.0), // Rounded corners
                     ),
                   ),
-                  child: Text(
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
                     'Cash Out',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white, // White text color
+                      color: Colors.white,
                     ),
                   ),
                 ),
