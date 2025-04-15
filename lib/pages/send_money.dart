@@ -194,26 +194,29 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: isLoading ? null : _sendMoney,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6A4CFF),
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 165),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+              Center(
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _sendMoney,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF6A4CFF),
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
                   ),
-                ),
-                child: isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                  'Send',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                    'Send',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
+
             ],
           ),
         ),
