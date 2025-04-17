@@ -171,24 +171,27 @@ class _RechargePageState extends State<RechargePage> {
             SizedBox(height: 30),
 
             // Send Button
-            ElevatedButton(
-              onPressed: _recharge,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF6A4CFF), // SwiftPay button color (purple)
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 150),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0), // Rounded corners
+            Center(
+              child: ElevatedButton(
+                onPressed: _recharge,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6A4CFF), // SwiftPay button color (purple)
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40), // Reduced padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                  ),
                 ),
-              ),
-              child: Text(
-                'Recharge',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,  // White text color
+                child: Text(
+                  'Recharge',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // White text color
+                  ),
                 ),
               ),
             ),
+
           ],
         ),
       ),

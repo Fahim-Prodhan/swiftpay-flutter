@@ -186,24 +186,29 @@ class _CashOutPageState extends State<CashOutPage> {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: isLoading ? null : _cashOut,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6A4CFF), // SwiftPay button color (purple)
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 150),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0), // Rounded corners
+              Center(
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _cashOut,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF6A4CFF), // SwiftPay button color (purple)
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40), // Reduced horizontal padding
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Cash Out',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,  // White text color
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                    'Cash Out',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
+
 
             ],
           ),
