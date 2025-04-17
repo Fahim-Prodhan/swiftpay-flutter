@@ -45,25 +45,19 @@ class _CashOutPageState extends State<CashOutPage> {
     String phone = _phoneController.text.trim();
     String amount = _amountController.text.trim();
     String pin = _pinController.text.trim();
-
     if (phone.isEmpty || amount.isEmpty || pin.isEmpty) {
       _showAlertDialog('Please fill in all fields');
       return;
     }
-
     double parsedAmount = double.tryParse(amount) ?? 0;
-
     if (parsedAmount < 50) {
       _showAlertDialog("Minimum amount to Cash Out is 50 Taka.");
       return;
     }
-
     setState(() {
       isLoading = true;
     });
-
     final url = Uri.parse('$baseUrl/api/transaction/create-cash-out-transaction');
-
     try {
       final response = await http.post(
         url,
@@ -76,9 +70,7 @@ class _CashOutPageState extends State<CashOutPage> {
           "tType": "Agent Transaction",
         }),
       );
-
       final data = json.decode(response.body);
-
       if (response.statusCode == 200) {
         _showSuccessDialog("Cash Out successfully.");
       } else {

@@ -32,18 +32,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final phone = phoneController.text.trim();
     final pin = pinController.text.trim();
     final role = isUser ? "user" : "agent";
-
     if (fullName.isEmpty || email.isEmpty || phone.isEmpty || pin.length < 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill all fields correctly.")),
       );
       return;
     }
-
     setState(() {
       isLoading = true;
     });
-
     try {
       final body = {
         "fullName": fullName,
@@ -52,7 +49,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "pin": pin,
         "role": role,
       };
-
       final res = await http.post(
         Uri.parse('$baseUrl/api/auth/signup'),
         headers: {"Content-Type": "application/json"},

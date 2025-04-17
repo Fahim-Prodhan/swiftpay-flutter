@@ -20,29 +20,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loginUser() async {
     setState(() => isLoading = true);
-
     final email = emailController.text.trim();
     final pin = pinController.text.trim();
-
-
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': email, 'password': pin}),
       );
-
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         // Save to local storage
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('userId', data['_id']);
-
         // Navigate or show success
         print("Login successful! User ID saved: ${data['_id']}");
-
         Navigator.pushReplacementNamed(context, '/home'); // Optional
       } else {
         final error = jsonDecode(response.body);
